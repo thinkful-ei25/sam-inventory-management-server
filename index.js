@@ -5,10 +5,14 @@ const cors = require('cors');
 const morgan = require('morgan');
 
 const { PORT, CLIENT_ORIGIN } = require('./config');
-const { dbConnect } = require('./db-mongoose');
-// const {dbConnect} = require('./db-knex');
+const { dbConnect } = require('./db/db-mongoose');
+// const {dbConnect} = require('.db/db-knex');
+
+//routes to items
+const itemsRouter = require('./routes/items');
 
 const app = express();
+
 
 app.use(
   morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', {
@@ -16,11 +20,16 @@ app.use(
   })
 );
 
+app.use(express.json());
+
 app.use(
   cors({
     origin: CLIENT_ORIGIN
   })
 );
+
+//mount routers
+app.use('/api/items', itemsRouter);
 
 function runServer(port = PORT) {
   const server = app
