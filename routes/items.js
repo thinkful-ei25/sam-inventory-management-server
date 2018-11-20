@@ -26,7 +26,7 @@ router.get('/:id', (req,res,next)=>{
 
   let projection = {name: 1, category: 1, quantity: 1, weight: 1, location: 1};
   const id = req.params.id;
-  Item.findById(id,projection)
+  Item.findById({_id:id},projection)
     .then(result=>{
       if(result){
         res.json(result);
@@ -71,7 +71,7 @@ router.put('/:id', (res,req,next)=>{
     return next(err);
   }
 
-  Item.findByIdAndUpdate(id,updatedItem, updateNew)
+  Item.findByIdAndUpdate({_id:id},updatedItem, updateNew)
     .then(result=>{
       if(result){
         res.json(result);
