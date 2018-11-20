@@ -10,7 +10,7 @@ const Item = require('../models/items');
 
 router.get('/', (req,res,next)=>{
   
-  let projection = {name: 1, category: 1, quantity: 1, weight: 1, location: 1}
+  let projection = {name: 1, category: 1, quantity: 1, weight: 1, location: 1};
   
   Item.find({}, projection)
     .then(result=>{
@@ -19,7 +19,79 @@ router.get('/', (req,res,next)=>{
     .catch(err=>{
       next(err);
     });
-    
+
+});
+
+router.get('/:id', (req,res,next)=>{
+
+  let projection = {name: 1, category: 1, quantity: 1, weight: 1, location: 1};
+  const id = req.params.id;
+  Item.findById(id,projection)
+    .then(result=>{
+      if(result){
+        res.json(result);
+      } else {
+        next();
+      }
+    })
+    .catch(err=>next(err));
+
+});
+
+router.post('/', (req,res,next)=>{
+  const {name, category, quantity, weight, location} = req.body;
+
+  const newItem = {name, category, quantity, weight, location};
+
+  Item.create(newItem)
+    .then(result=>{
+      let returned = {
+        name: result.name, 
+        category:result.category, 
+        quantity: result.quantity,
+        weight: result.weight,
+        location: result.location
+      };
+      res.location(`${req.originalUrl}/${result.id}`).status(201).json(returned);
+    })
+    .catch(err=>next(err));
+  
+});
+
+router.put('/:id', (res,req,next)=>{
+  const id = req.params.id;
+  const {name, category, quantity, weight, location} = req.body;
+  const updatedItem = {name, category, quantity, weight, location};
+  const updateNew = {new: true};
+
+  if(!mongoose.Types.ObjectId.isValid(id)){
+    const err = new Error('Invalid `ID` entered');
+    err.status = 400;
+    return next(err);
+  }
+
+  Item.findByIdAndUpdate(id,updatedItem, updateNew)
+    .then(result=>{
+      if(result){
+        res.json(result);
+      } else {
+        next();
+      }
+    })
+    .catch(err=>{
+      next(err);
+    });
+
+});
+
+router.delete('/:id', (req,res,next)=>{
+  const id = req.params.id;
+
+  Item.findOneAndDelete(id)
+    .then(()=>{
+      res.status(204).end();
+    })
+    .catch(err=>next(err));
 });
 
 module.exports = router;
