@@ -50,7 +50,8 @@ router.post('/', (req,res,next)=>{
         category:result.category, 
         quantity: result.quantity,
         weight: result.weight,
-        location: result.location
+        location: result.location,
+        id: result.id
       };
       res.location(`${req.originalUrl}/${result.id}`).status(201).json(returned);
     })
@@ -87,7 +88,12 @@ router.put('/:id', (res,req,next)=>{
 router.delete('/:id', (req,res,next)=>{
   const id = req.params.id;
 
-  Item.findOneAndDelete(id)
+  if(!mongoose.Types.ObjectId.isValid(id)){
+    const err = new Error('The `id` is not valid');
+    return next(err);
+  }
+
+  Item.findOneAndRemove({_id:id})
     .then(()=>{
       res.status(204).end();
     })
