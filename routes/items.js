@@ -59,7 +59,7 @@ router.post('/', (req,res,next)=>{
   
 });
 
-router.put('/:id', (res,req,next)=>{
+router.put('/:id', (req,res,next)=>{
   const id = req.params.id;
   const {name, category, quantity, weight, location} = req.body;
   const updatedItem = {name, category, quantity, weight, location};
