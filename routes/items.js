@@ -11,11 +11,9 @@ const Item = require('../models/items');
 router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
 
 router.get('/', (req,res,next)=>{
-  const user = req.user;
-  console.log(user);
-  let projection = {name: 1, category: 1, quantity: 1, weight: 1, location: 1};
-  
-  Item.find({}, projection)
+  const userId = req.user.id;
+  let projection = {name: 1, category: 1, quantity: 1, weight: 1, location: 1, userId: 1};
+  Item.find({userId}, projection)
     .then(result=>{
       res.json(result);
     })
@@ -29,7 +27,8 @@ router.get('/:id', (req,res,next)=>{
 
   let projection = {name: 1, category: 1, quantity: 1, weight: 1, location: 1};
   const id = req.params.id;
-  Item.findById({_id:id},projection)
+  const userId = req.user.id;
+  Item.findById({_id:id, userId},projection)
     .then(result=>{
       if(result){
         res.json(result);
@@ -43,8 +42,8 @@ router.get('/:id', (req,res,next)=>{
 
 router.post('/', (req,res,next)=>{
   const {name, category, quantity, weight, location} = req.body;
-
-  const newItem = {name, category, quantity, weight, location};
+  const userId = req.user.id;
+  const newItem = {name, category, quantity, weight, location, userId};
 
   Item.create(newItem)
     .then(result=>{
@@ -54,6 +53,7 @@ router.post('/', (req,res,next)=>{
         quantity: result.quantity,
         weight: result.weight,
         location: result.location,
+        userId: result.userId,
         id: result.id
       };
       res.location(`${req.originalUrl}/${result.id}`).status(201).json(returned);
@@ -66,7 +66,7 @@ router.put('/:id', (req,res,next)=>{
 
   const id = req.params.id;
   const updatedItem = {};
-
+  const userId = req.user.id;
   const updatableFields = ['name', 'category', 'weight', 'quantity', 'location'];
 
   updatableFields.forEach(field=>{
@@ -83,7 +83,7 @@ router.put('/:id', (req,res,next)=>{
     return next(err);
   }
 
-  Item.findByIdAndUpdate({_id:id},updatedItem, updateNew)
+  Item.findByIdAndUpdate({_id:id, userId},updatedItem, updateNew)
     .then(result=>{
       if(result){
         res.json(result);
@@ -99,13 +99,13 @@ router.put('/:id', (req,res,next)=>{
 
 router.delete('/:id', (req,res,next)=>{
   const id = req.params.id;
-
+  const userId = req.user.id;
   if(!mongoose.Types.ObjectId.isValid(id)){
     const err = new Error('The `id` is not valid');
     return next(err);
   }
 
-  Item.findOneAndRemove({_id:id})
+  Item.findOneAndRemove({_id:id, userId})
     .then(()=>{
       res.status(204).end();
     })

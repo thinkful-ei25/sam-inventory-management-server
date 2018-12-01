@@ -7,7 +7,8 @@ const itemSchema = new mongoose.Schema({
   category: {type: String, required: true},
   weight: {type: String, required: true},
   quantity: {type: String, required: true},
-  location: {type: String, required: true}
+  location: {type: String, required: true},
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 });
 
 itemSchema.set('timestamps', true);

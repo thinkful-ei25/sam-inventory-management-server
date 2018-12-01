@@ -6,7 +6,8 @@ const items = [
     'category' : 'weapons',
     'weight' : '6.8',
     'quantity' : '1',
-    'location' : 'backpack'
+    'location' : 'backpack',
+    'userId': '5c0292ef4059bf69183f6646'
   },
   {
     '_id': '000000000000000000000001',
@@ -14,7 +15,8 @@ const items = [
     'category' : 'weapons',
     'weight' : '8.4',
     'quantity' : '1',
-    'location' : 'backpack'
+    'location' : 'backpack',
+    'userId': '5c0292ef4059bf69183f6646'
   },
   {
     '_id': '000000000000000000000002',
@@ -22,7 +24,8 @@ const items = [
     'category' : 'apparel',
     'weight' : '0.1',
     'quantity' : '1',
-    'location' : 'backpack'
+    'location' : 'backpack',
+    'userId': '5c0292ef4059bf69183f6646'
   }
 ];
 
