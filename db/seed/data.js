@@ -29,4 +29,17 @@ const items = [
   }
 ];
 
-module.exports = {items};
+const users = [
+  {
+    '_id': '5c0292ef4059bf69183f6646',
+    'username' : 'testUser',
+    'password': 'password',
+  },
+  {
+    '_id': '5c0292ef4059bf69183f6600',
+    'username' : 'test',
+    'password' : 'password'
+  }
+];
+
+module.exports = {items, users};
