@@ -8,11 +8,12 @@ const mongoose = require('mongoose');
 
 const Item = require('../models/items');
 
-router.get('/', (req,res,next)=>{
+router.get('/',(req,res,next)=>{
+  const userId = req.body.userId;
+  let filter = {userId: ObjectId(userId)};
+  let projection = {name: 1, category: 1, quantity: 1, weight: 1, location: 1, userId: 1};
   
-  let projection = {name: 1, category: 1, quantity: 1, weight: 1, location: 1};
-  
-  Item.find({}, projection)
+  Item.find({filter}, projection)
     .then(result=>{
       res.json(result);
     })
@@ -24,9 +25,10 @@ router.get('/', (req,res,next)=>{
 
 router.get('/:id', (req,res,next)=>{
 
-  let projection = {name: 1, category: 1, quantity: 1, weight: 1, location: 1};
+  let projection = {name: 1, category: 1, quantity: 1, weight: 1, location: 1, userId: 1};
   const id = req.params.id;
-  Item.findById({_id:id},projection)
+  const userId = req.body.userId;
+  Item.findById({_id:id, userId},projection)
     .then(result=>{
       if(result){
         res.json(result);
@@ -40,8 +42,9 @@ router.get('/:id', (req,res,next)=>{
 
 router.post('/', (req,res,next)=>{
   const {name, category, quantity, weight, location} = req.body;
+  const userId = req.body.userId;
 
-  const newItem = {name, category, quantity, weight, location};
+  const newItem = {name, category, quantity, weight, location, userId};
 
   Item.create(newItem)
     .then(result=>{
@@ -51,6 +54,7 @@ router.post('/', (req,res,next)=>{
         quantity: result.quantity,
         weight: result.weight,
         location: result.location,
+        userId: result.userId,
         id: result.id
       };
       res.location(`${req.originalUrl}/${result.id}`).status(201).json(returned);
@@ -61,6 +65,7 @@ router.post('/', (req,res,next)=>{
 
 router.put('/:id', (req,res,next)=>{
   const id = req.params.id;
+  const userId = req.body.userId;
   const {name, category, quantity, weight, location} = req.body;
   const updatedItem = {name, category, quantity, weight, location};
   const updateNew = {new: true};
@@ -71,7 +76,7 @@ router.put('/:id', (req,res,next)=>{
     return next(err);
   }
 
-  Item.findByIdAndUpdate({_id:id},updatedItem, updateNew)
+  Item.findOneAndUpdate({_id:id, userId},updatedItem, updateNew)
     .then(result=>{
       if(result){
         res.json(result);
@@ -87,13 +92,14 @@ router.put('/:id', (req,res,next)=>{
 
 router.delete('/:id', (req,res,next)=>{
   const id = req.params.id;
+  const userId = req.body.userId;
 
   if(!mongoose.Types.ObjectId.isValid(id)){
     const err = new Error('The `id` is not valid');
     return next(err);
   }
 
-  Item.findOneAndRemove({_id:id})
+  Item.findOneAndRemove({_id:id, userId})
     .then(()=>{
       res.status(204).end();
     })
