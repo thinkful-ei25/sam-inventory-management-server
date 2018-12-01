@@ -5,7 +5,6 @@ const chaiHttp = require('chai-http');
 const mongoose = require('mongoose');
 const express = require('express');
 const sinon = require('sinon');
-const jwt = require('jsonwebtoken');
 
 const {app} = require('../index');
 const Item = require('../models/items');
@@ -137,7 +136,7 @@ describe('Inventory Manager API - Items', ()=>{
         .then(_data=>{
           data = _data;
           return chai.request(app)
-            .delete(`/api/items/${data.id}`)
+            .delete(`/api/items/${data.id}`);
         })
         .then(res=>{
           expect(res).to.have.status(204);
