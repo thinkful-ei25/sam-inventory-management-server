@@ -2,3 +2,5 @@
  node_js: node
  services:
      - mongodb
+ env:
+  -JWT_SECRET=test-value
