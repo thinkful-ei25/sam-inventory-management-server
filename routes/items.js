@@ -60,9 +60,18 @@ router.post('/', (req,res,next)=>{
 });
 
 router.put('/:id', (req,res,next)=>{
+
   const id = req.params.id;
-  const {name, category, quantity, weight, location} = req.body;
-  const updatedItem = {name, category, quantity, weight, location};
+  const updatedItem = {};
+
+  const updatableFields = ['name', 'category', 'weight', 'quantity', 'location'];
+
+  updatableFields.forEach(field=>{
+    if(field in req.body){
+      updatedItem[field] = req.body[field];
+    }
+  });
+
   const updateNew = {new: true};
 
   if(!mongoose.Types.ObjectId.isValid(id)){
